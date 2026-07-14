@@ -65,6 +65,16 @@ class CliTests(unittest.TestCase):
             code = main([EASY_PUZZLE, "--multi"])
         self.assertEqual(code, 0)
 
+    def test_hybrid_method_finishes_extreme_puzzles(self) -> None:
+        """--method hybrid completes what pure logic cannot."""
+        out = io.StringIO()
+        with redirect_stdout(out):
+            code = main([EXTREME_PUZZLE, "--method", "hybrid", "-e"])
+        self.assertEqual(code, 0)
+        text = out.getvalue()
+        self.assertIn("[Backtracking]", text)
+        self.assertIn("Solved in", text)
+
 
 if __name__ == "__main__":
     unittest.main()

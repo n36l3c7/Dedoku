@@ -48,6 +48,16 @@ def build_parser() -> argparse.ArgumentParser:
         help="print every deduction in order before the final board",
     )
     parser.add_argument(
+        "--method",
+        choices=("logic", "hybrid", "backtracking"),
+        default="logic",
+        help=(
+            "logic (default): explainable techniques only, may stall on "
+            "the hardest puzzles; hybrid: techniques first, brute force "
+            "completes any remainder; backtracking: brute force directly"
+        ),
+    )
+    parser.add_argument(
         "--multi",
         action="store_true",
         help=(
@@ -92,7 +102,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     text = args.puzzle if args.puzzle is not None else sys.stdin.read()
     try:
-        result = solve(text, assume_unique=not args.multi)
+        result = solve(
+            text, method=args.method, assume_unique=not args.multi
+        )
     except SudokuError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

@@ -30,6 +30,7 @@ from .techniques import (
     NakedQuad,
     NakedSingle,
     NakedTriple,
+    Placement,
     PointingCandidates,
     SimpleColouring,
     Step,
@@ -69,6 +70,15 @@ class SolveResult:
     grid: "Grid | None" = field(default=None)
 
     @property
+    def used_backtracking(self) -> bool:
+        """bool: Whether brute force contributed to this result.
+
+        ``True`` only when the solver ran with the explicit backtracking
+        fallback enabled *and* the logical techniques were not enough.
+        """
+        return any(step.technique == "Backtracking" for step in self.steps)
+
+    @property
     def techniques_used(self) -> tuple[str, ...]:
         """tuple[str, ...]: Distinct technique names, in first-use order."""
         return tuple(dict.fromkeys(step.technique for step in self.steps))
@@ -90,6 +100,11 @@ class SudokuSolver:
         the default pipeline, so solving stays sound on puzzles that may
         have multiple solutions. Ignored when ``techniques`` is given.
     :type assume_unique: bool
+    :param backtracking_fallback: When ``True``, a puzzle the logical
+        pipeline cannot finish is completed by brute-force search over
+        the remaining candidates, recorded as an explicit
+        ``"Backtracking"`` step. Off by default: logic only.
+    :type backtracking_fallback: bool
     """
 
     def __init__(
@@ -97,12 +112,14 @@ class SudokuSolver:
         techniques: Sequence[Technique] | None = None,
         *,
         assume_unique: bool = True,
+        backtracking_fallback: bool = False,
     ) -> None:
         self._techniques: tuple[Technique, ...] = (
             tuple(techniques)
             if techniques is not None
             else self.default_techniques(assume_unique=assume_unique)
         )
+        self._backtracking_fallback = backtracking_fallback
 
     @staticmethod
     def default_techniques(*, assume_unique: bool = True) -> tuple[Technique, ...]:
@@ -163,8 +180,10 @@ class SudokuSolver:
         The grid is mutated: values are placed and candidates eliminated.
         When the pipeline runs dry before the board is complete, the
         result reports ``solved=False`` and the grid holds the partial
-        progress, ready for inspection or for a retry with a stronger
-        pipeline.
+        progress — unless the solver was built with
+        ``backtracking_fallback=True``, in which case the remainder is
+        completed by brute force and recorded as a ``"Backtracking"``
+        step.
 
         :param grid: The board to solve.
         :type grid: Grid
@@ -182,8 +201,57 @@ class SudokuSolver:
                     break
             else:
                 break
+        if not grid.is_solved() and self._backtracking_fallback:
+            steps.extend(self._fall_back(grid, len(steps)))
         return SolveResult(
             solved=grid.is_solved(), steps=tuple(steps), grid=grid
+        )
+
+    @staticmethod
+    def _fall_back(grid: Grid, logical_steps: int) -> tuple[Step, ...]:
+        """Complete a stalled grid by brute force, as one explicit step.
+
+        :param grid: The stalled board to complete in place.
+        :type grid: Grid
+        :param logical_steps: How many logical steps ran before the
+            fallback (used in the step description).
+        :type logical_steps: int
+        :returns: A single ``"Backtracking"`` step listing every placed
+            cell, or no steps when the board admits no completion.
+        :rtype: tuple[Step, ...]
+        :raises dedoku.exceptions.ContradictionError: If no completion
+            exists, meaning the puzzle has no solution.
+        """
+        from .backtracking import complete_with_backtracking
+        from .exceptions import ContradictionError
+
+        pending = [cell for cell in grid.cells if not cell.is_solved]
+        if not complete_with_backtracking(grid):
+            raise ContradictionError(
+                "the puzzle has no solution (backtracking found no "
+                "completion)"
+            )
+        placements = tuple(
+            Placement(cell.row_index, cell.column_index, cell.value)
+            for cell in pending
+            if cell.value is not None
+        )
+        if logical_steps:
+            description = (
+                f"logical techniques exhausted after {logical_steps} "
+                f"steps; depth-first search filled the remaining "
+                f"{len(placements)} cells"
+            )
+        else:
+            description = (
+                f"depth-first search filled all {len(placements)} cells"
+            )
+        return (
+            Step(
+                technique="Backtracking",
+                description=description,
+                placements=placements,
+            ),
         )
 
     def __repr__(self) -> str:
