@@ -10,6 +10,7 @@ uniqueness arguments, ...) will extend this package.
 from __future__ import annotations
 
 from .base import Step, Technique
+from .bug import BivalueUniversalGrave
 from .chute import ChuteRemotePairs
 from .colouring import SimpleColouring
 from .fish import Swordfish, XWing
@@ -41,4 +42,5 @@ __all__ = [
     "UniqueRectangle",
     "Swordfish",
     "XYZWing",
+    "BivalueUniversalGrave",
 ]

@@ -59,7 +59,7 @@ Implemented step by step, from simplest to most advanced:
 9. [x] **Rectangle Elimination** (Unique Rectangles)
 10. [x] **Swordfish**
 11. [x] **XYZ-Wing**
-12. [ ] **BUG** (Bivalue Universal Grave)
+12. [x] **BUG** (Bivalue Universal Grave)
 13. [ ] **Avoidable Rectangles**
 
 ## Usage
