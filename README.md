@@ -136,8 +136,8 @@ Windows 11. Levels are graded by the hardest technique the original
 ### Solve-time distribution
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/n36l3c7/dedoku/main/docs/benchmark-distribution-dark.svg">
-  <img alt="Solve-time distribution by difficulty level: one dot per puzzle on a logarithmic ms scale, backtracking vs logic library, with medians marked" src="https://raw.githubusercontent.com/n36l3c7/dedoku/main/docs/benchmark-distribution-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/benchmark-distribution-dark.svg">
+  <img alt="Solve-time distribution by difficulty level: one dot per puzzle on a logarithmic ms scale, backtracking vs logic library, with medians marked" src="docs/benchmark-distribution-light.svg">
 </picture>
 
 | Level | Solved by library | BT median | BT p95 | BT max | Library median | Library p95 | Library max |
@@ -168,8 +168,8 @@ Key findings:
 ### Which techniques crack the extreme tier
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/n36l3c7/dedoku/main/docs/benchmark-techniques-dark.svg">
-  <img alt="Number of solved extreme puzzles in which each advanced technique fired, XY-Chain leading with 55 of 89" src="https://raw.githubusercontent.com/n36l3c7/dedoku/main/docs/benchmark-techniques-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/benchmark-techniques-dark.svg">
+  <img alt="Number of solved extreme puzzles in which each advanced technique fired, XY-Chain leading with 55 of 89" src="docs/benchmark-techniques-light.svg">
 </picture>
 
 ### Reproduce it
