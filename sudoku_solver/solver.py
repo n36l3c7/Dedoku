@@ -24,6 +24,7 @@ from .techniques import (
     NakedSingle,
     NakedTriple,
     PointingCandidates,
+    SimpleColouring,
     Step,
     Technique,
     XWing,
@@ -94,6 +95,7 @@ class SudokuSolver:
             ClaimingCandidates(),
             XWing(),
             ChuteRemotePairs(),
+            SimpleColouring(),
         )
 
     @property

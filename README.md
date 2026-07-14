@@ -53,7 +53,7 @@ Implemented step by step, from simplest to most advanced:
 3. [x] **Intersection Removal** (Pointing and Claiming)
 4. [x] **X-Wing**
 5. [x] **Chute Remote Pairs**
-6. [ ] **Simple Colouring**
+6. [x] **Simple Colouring**
 7. [ ] **W-Wing**
 8. [ ] **Y-Wing** (XY-Wing)
 9. [ ] **Rectangle Elimination** (Unique Rectangles)
