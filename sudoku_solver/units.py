@@ -36,6 +36,7 @@ class Unit:
             raise ValueError(f"unit index must be within 0-8, got {index}")
         self._index = index
         self._cells: list[Cell] = []
+        self._cells_view: tuple[Cell, ...] | None = None
 
     def register(self, cell: Cell) -> None:
         """Add ``cell`` to the unit while the grid is being built.
@@ -50,6 +51,7 @@ class Unit:
         if len(self._cells) >= 9:
             raise RuntimeError(f"{self.name} already holds nine cells")
         self._cells.append(cell)
+        self._cells_view = None
 
     # ------------------------------------------------------------------
     # Identity
@@ -69,8 +71,13 @@ class Unit:
     # ------------------------------------------------------------------
     @property
     def cells(self) -> tuple[Cell, ...]:
-        """tuple[Cell, ...]: The nine cells of the unit, in board order."""
-        return tuple(self._cells)
+        """tuple[Cell, ...]: The nine cells of the unit, in board order.
+
+        The tuple is cached, since the wiring never changes once built.
+        """
+        if self._cells_view is None:
+            self._cells_view = tuple(self._cells)
+        return self._cells_view
 
     def __iter__(self) -> Iterator[Cell]:
         """Iterate over the cells of the unit in board order.

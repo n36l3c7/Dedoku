@@ -37,7 +37,8 @@ class Cell:
     """
 
     __slots__ = ("_row_index", "_column_index", "_value", "_candidates",
-                 "_row", "_column", "_subgrid", "_is_given")
+                 "_row", "_column", "_subgrid", "_is_given",
+                 "_peers_cache", "_candidates_view")
 
     def __init__(self, row_index: int, column_index: int) -> None:
         if row_index not in range(9) or column_index not in range(9):
@@ -53,6 +54,8 @@ class Cell:
         self._column: Column | None = None
         self._subgrid: Subgrid | None = None
         self._is_given = False
+        self._peers_cache: tuple[Cell, ...] | None = None
+        self._candidates_view: frozenset[int] | None = None
 
     # ------------------------------------------------------------------
     # Wiring
@@ -141,9 +144,12 @@ class Cell:
     def candidates(self) -> frozenset[int]:
         """frozenset[int]: Immutable view of the remaining candidates.
 
-        A solved cell exposes an empty set.
+        A solved cell exposes an empty set. The view is cached between
+        mutations, so repeated reads are cheap.
         """
-        return frozenset(self._candidates)
+        if self._candidates_view is None:
+            self._candidates_view = frozenset(self._candidates)
+        return self._candidates_view
 
     @property
     def is_solved(self) -> bool:
@@ -173,16 +179,21 @@ class Cell:
     def peers(self) -> tuple[Cell, ...]:
         """tuple[Cell, ...]: The 20 distinct cells sharing a house with this one.
 
-        Peers are returned sorted by position for deterministic iteration.
+        Peers are returned sorted by position for deterministic iteration
+        and cached after the first access, since the wiring never changes.
 
         :raises RuntimeError: If the cell has not been attached to a grid.
         """
-        seen: dict[int, Cell] = {}
-        for unit in (self.row, self.column, self.subgrid):
-            for cell in unit.cells:
-                if cell is not self:
-                    seen[id(cell)] = cell
-        return tuple(sorted(seen.values(), key=lambda cell: cell.position))
+        if self._peers_cache is None:
+            seen: dict[int, Cell] = {}
+            for unit in (self.row, self.column, self.subgrid):
+                for cell in unit.cells:
+                    if cell is not self:
+                        seen[id(cell)] = cell
+            self._peers_cache = tuple(
+                sorted(seen.values(), key=lambda cell: cell.position)
+            )
+        return self._peers_cache
 
     def sees(self, other: Cell) -> bool:
         """Report whether ``other`` shares a house with this cell.
@@ -229,6 +240,7 @@ class Cell:
             )
         self._value = digit
         self._candidates.clear()
+        self._candidates_view = None
         for peer in self.peers:
             peer.remove_candidate(digit)
 
@@ -264,6 +276,7 @@ class Cell:
         if self._value is not None or digit not in self._candidates:
             return False
         self._candidates.discard(digit)
+        self._candidates_view = None
         if not self._candidates:
             raise ContradictionError(
                 f"cell {self.label} has no candidates left"

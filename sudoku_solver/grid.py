@@ -43,6 +43,9 @@ class Grid:
                 )
                 cells.append(cell)
         self._cells: tuple[Cell, ...] = tuple(cells)
+        self._units: tuple[Unit, ...] = (
+            self._rows + self._columns + self._subgrids
+        )
 
     # ------------------------------------------------------------------
     # Construction
@@ -151,7 +154,7 @@ class Grid:
     @property
     def units(self) -> tuple[Unit, ...]:
         """tuple[Unit, ...]: All 27 houses: rows, then columns, then subgrids."""
-        return self._rows + self._columns + self._subgrids
+        return self._units
 
     def __iter__(self) -> Iterator[Cell]:
         """Iterate over all 81 cells in board order.
