@@ -71,7 +71,7 @@ first 13 techniques stall on the hardest puzzles:
 17. [x] **XY-Chain**
 18. [x] **3D Medusa**
 19. [x] **ALS-XZ** (Almost Locked Sets)
-20. [ ] **AIC** (Alternating Inference Chains)
+20. [x] **AIC** (Alternating Inference Chains)
 
 ## Usage
 
