@@ -10,6 +10,7 @@ uniqueness arguments, ...) will extend this package.
 from __future__ import annotations
 
 from .base import Step, Technique
+from .chute import ChuteRemotePairs
 from .fish import XWing
 from .hidden import HiddenPair, HiddenQuad, HiddenSingle, HiddenTriple
 from .intersections import ClaimingCandidates, PointingCandidates
@@ -29,4 +30,5 @@ __all__ = [
     "PointingCandidates",
     "ClaimingCandidates",
     "XWing",
+    "ChuteRemotePairs",
 ]

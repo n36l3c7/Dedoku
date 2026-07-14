@@ -13,6 +13,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Sequence
 
 from .techniques import (
+    ChuteRemotePairs,
     ClaimingCandidates,
     HiddenPair,
     HiddenQuad,
@@ -92,6 +93,7 @@ class SudokuSolver:
             PointingCandidates(),
             ClaimingCandidates(),
             XWing(),
+            ChuteRemotePairs(),
         )
 
     @property
