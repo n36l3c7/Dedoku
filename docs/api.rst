@@ -53,6 +53,12 @@ The solver
 .. autoclass:: dedoku.Technique
    :members:
 
+Brute force (opt-in)
+--------------------
+
+.. automodule:: dedoku.backtracking
+   :members:
+
 Exceptions
 ----------
 

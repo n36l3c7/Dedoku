@@ -36,6 +36,13 @@ Options
     ``RxCy = digit``, eliminations as a removal count, each with the
     technique name and its explanation.
 
+``--method {logic,hybrid,backtracking}``
+    ``logic`` (default) uses the explainable techniques only and may
+    stall on the hardest puzzles; ``hybrid`` completes any remainder by
+    brute force; ``backtracking`` brute-forces directly. Brute-forced
+    cells appear in ``--explain`` as one explicit ``[Backtracking]``
+    step.
+
 ``--multi``
     Do not assume the puzzle has a unique solution (disables the
     uniqueness-based techniques).

@@ -46,6 +46,24 @@ description, and the exact effect on the board:
            print(f"{step.technique}: {elimination.digit} removed from "
                  f"R{elimination.row + 1}C{elimination.column + 1}")
 
+When you just need the answer
+-----------------------------
+
+By default dedoku never guesses. For the rare puzzles beyond the logical
+pipeline — or when explainability does not matter — opt in explicitly:
+
+.. code-block:: python
+
+   dedoku.solve(puzzle, method="hybrid")         # logic first, then brute force
+   dedoku.solve(puzzle, method="backtracking")   # brute force directly
+
+Anything brute-forced is recorded as an explicit ``"Backtracking"`` step,
+and ``result.used_backtracking`` reports whether it ran — the solving path
+never lies about how a cell was filled. In hybrid mode the search runs on
+the candidates the techniques already narrowed, so the brute-force tail is
+typically tiny. On puzzles that may have multiple solutions, combine
+``method="hybrid"`` with ``assume_unique=False``.
+
 Puzzles without a guaranteed unique solution
 --------------------------------------------
 

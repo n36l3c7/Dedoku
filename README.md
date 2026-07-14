@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen)](pyproject.toml)
 [![Tests](https://github.com/n36l3c7/dedoku/actions/workflows/tests.yml/badge.svg)](https://github.com/n36l3c7/dedoku/actions/workflows/tests.yml)
-[![Backtracking](https://img.shields.io/badge/backtracking-never-red)](#solving-philosophy)
+[![Backtracking](https://img.shields.io/badge/backtracking-opt--in%20only-red)](#solving-philosophy)
 [![Docs](https://img.shields.io/badge/docs-online-2a78d6)](https://n36l3c7.github.io/dedoku/)
 
 A **pure-Python** Sudoku solving library that relies exclusively on
@@ -32,10 +32,14 @@ and audited.
 
 ### Solving philosophy
 
-**No backtracking. No guessing. Ever.** If the pipeline of logical techniques
-cannot finish a puzzle, the solver stops and says so — it never falls back to
-trial and error. On the benchmark's hardest tier this happens on 11 puzzles
-out of 100; everything below that tier is solved outright.
+**Logic first. Guessing only if you ask for it.** By default the solver never
+backtracks: if the pipeline of logical techniques cannot finish a puzzle, it
+stops and says so (11 puzzles out of 100 on the benchmark's hardest tier).
+When you just need the answer, two explicit opt-in modes exist —
+`method="hybrid"` completes the remainder by brute force after the techniques
+stall, `method="backtracking"` skips logic entirely — and anything
+brute-forced is recorded as an explicit `"Backtracking"` step: the solving
+path never lies about how a cell was filled.
 
 ## Installation
 
@@ -67,6 +71,10 @@ print(result.solved)   # True
 print(result.grid)     # pretty-printed solved board
 for step in result.steps:
     print(f"[{step.technique}] {step.description}")
+
+# When you just need the answer, even beyond the logical pipeline:
+dedoku.solve(puzzle, method="hybrid")         # logic first, brute force finishes
+dedoku.solve(puzzle, method="backtracking")   # brute force directly
 ```
 
 Or with full control over the board and the pipeline:
@@ -129,8 +137,10 @@ $ dedoku 53007000060019500009800006080006000340080300170002000606000028000041900
 Solved in 51 steps using: Naked Single
 ```
 
-Options: puzzle from argument or stdin, `--multi` for puzzles without a
-guaranteed unique solution, exit codes 0/1/2 (solved / stalled / invalid).
+Options: puzzle from argument or stdin, `--method {logic,hybrid,backtracking}`
+(logic is the default; the other two finish any puzzle by explicit brute
+force), `--multi` for puzzles without a guaranteed unique solution, exit
+codes 0/1/2 (solved / stalled / invalid).
 
 ## Implemented techniques
 
@@ -236,7 +246,7 @@ python benchmark/make_charts.py        # renders the SVG charts into docs/
 ## Development
 
 ```bash
-python -m unittest discover -s tests -v   # 86 tests, includes the step oracle
+python -m unittest discover -s tests -v   # 100 tests, includes the step oracle
 python -m ruff check dedoku tests benchmark
 python -m mypy dedoku
 python -m coverage run -m unittest discover -s tests && python -m coverage report

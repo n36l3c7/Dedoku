@@ -4,6 +4,22 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.7.0] - 2026-07-14
+
+### Added
+- Opt-in brute force. `dedoku.solve(puzzle, method=...)` accepts
+  `"logic"` (default, unchanged), `"hybrid"` (logical techniques first,
+  depth-first search completes any remainder), and `"backtracking"`
+  (search directly); the CLI gains `--method` and
+  `SudokuSolver(backtracking_fallback=True)` exposes the same at class
+  level. The search honours the current candidates, and anything
+  brute-forced is recorded as an explicit `"Backtracking"` step —
+  `SolveResult.used_backtracking` reports whether it ran.
+
+### Changed
+- Nothing in the default behaviour: logic only, never guessing, exactly
+  as before.
+
 ## [0.6.0] - 2026-07-14
 
 ### Added
@@ -80,6 +96,7 @@ First release published to PyPI.
 - Logic-only solving engine with the original 13 technique families,
   from naked singles to avoidable rectangles — no backtracking, ever.
 
+[0.7.0]: https://github.com/n36l3c7/dedoku/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/n36l3c7/dedoku/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/n36l3c7/dedoku/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/n36l3c7/dedoku/compare/v0.3.0...v0.4.0
