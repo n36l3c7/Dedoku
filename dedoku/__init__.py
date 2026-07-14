@@ -17,7 +17,7 @@ from .solver import SolveResult, SudokuSolver
 from .techniques import Step, Technique
 from .units import Column, Row, Subgrid, Unit
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 __all__ = [
     "DIGITS",
