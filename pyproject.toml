@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dedoku"
-version = "0.7.0"
+version = "1.0.0"
 description = "A pure-Python Sudoku solver that uses only human-style logical deduction techniques (no backtracking)."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -14,7 +14,7 @@ authors = [
 ]
 keywords = ["sudoku", "solver", "puzzle", "logic", "deduction"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
